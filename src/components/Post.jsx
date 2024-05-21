@@ -29,7 +29,7 @@ function Post({ post, id }) {
         <Link href={`/posts/${id}`}>
           <img src={post.image} alt="" className="rounded-2xl mr-2" />
         </Link>
-        <Icons />
+        <Icons id={post?.id} />
       </div>
     </div>
   );
