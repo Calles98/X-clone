@@ -1,11 +1,20 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { modalState, postIdState } from "@/atom/modalAtom";
 import Modal from "react-modal";
 import { HiX } from "react-icons/hi";
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { app } from "@/firebase";
+import { useRouter } from "next/navigation";
 const { useSession } = require("next-auth/react");
 
 function CommentModal() {
@@ -15,6 +24,7 @@ function CommentModal() {
   const [input, setInput] = useState("");
   const { data: session } = useSession();
   const db = getFirestore(app);
+  const router = useRouter();
 
   useEffect(() => {
     if (postId !== "") {
@@ -30,7 +40,23 @@ function CommentModal() {
     }
   }, [postId]);
 
-  const sendComment = async () => {};
+  const sendComment = async () => {
+    addDoc(collection(db, "posts", postId, "comments"), {
+      name: session.user.name,
+      username: session.user.username,
+      userImg: session.user.image,
+      comment: input,
+      timestamp: serverTimestamp(),
+    })
+      .then(() => {
+        setInput("");
+        setOpen(false);
+        router.push(`/posts/${postId}`);
+      })
+      .catch((error) => {
+        console.error("Error adding document", error);
+      });
+  };
 
   return (
     <div>
