@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { HiArrowLeft } from "react-icons/hi";
 import Post from "@/components/Post";
+import Comments from "@/components/Comments";
 
 async function PostPage({ params }) {
   let data = {};
@@ -19,6 +20,7 @@ async function PostPage({ params }) {
         </Link>
       </div>
       <Post post={data} id={data.id} />
+      <Comments id={params.id} />
     </div>
   );
 }
